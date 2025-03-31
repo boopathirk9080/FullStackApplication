@@ -1,36 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { use, useContext } from "react";
+import { assets } from "../../assets/assets";
+import { AppContext } from "../../context/AppContext";
+import { useLocation } from "react-router-dom";
 
-const Rating = ({ initialRating, onRate }) => {
-
-    const [rating, setRating] = useState(initialRating || 0);
-
-    const handleRating = (value) => {
-        setRating(value);
-        if (onRate) onRate(value);
-    };
-
-    useEffect(() => {
-        if (initialRating) {
-            setRating(initialRating);
-        }
-    }, [initialRating]);
-
-    return (
-        <div className="flex gap-2">
-            {Array.from({ length: 5 }, (_, index) => {
-                const starValue = index + 1;
-                return (
-                    <span
-                        key={index}
-                        className={`text-xl sm:text-2xl cursor-pointer transition-colors ${starValue <= rating ? 'text-yellow-500' : 'text-gray-400'}`}
-                        onClick={() => handleRating(starValue)}
-                    >
-                        &#9733;
-                    </span>
-                );
-            })}
-        </div>
-    );
+const Rating = ({ course }) => {
+  const { calculateAverageRating } = useContext(AppContext);
+  const { pathname } = useLocation();
+  return (
+    <div className="flex items-center space-x-2 pt-3 pb-1 text-sm">
+      <p>{calculateAverageRating(course)}</p>
+      <div className="flex">
+        {[...Array(5)].map((_, i) => (
+          <img
+            className="w-3.5 h-3.5"
+            key={i}
+            src={
+              i < Math.floor(calculateAverageRating(course))
+                ? assets.star
+                : assets.star_blank
+            }
+          />
+        ))}
+      </div>
+      <p className="text-blue-600 text-base md:text-sm">
+        ({course.courseRatings.length}{" "}
+        {pathname.startsWith("/course/") &&
+          (course.courseRatings.length > 1 ? "ratings" : "rating")}
+        )
+      </p>
+      {pathname.startsWith("/course/") && (
+        <p className="text-base md:text-sm">
+          {course.enrolledStudents.length}{" "}
+          {course.enrolledStudents.length > 1 ? "students" : "student"}
+        </p>
+      )}
+    </div>
+  );
 };
 
 export default Rating;
