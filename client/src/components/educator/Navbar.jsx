@@ -1,22 +1,18 @@
-import React, { useContext } from 'react';
-import { assets } from '../../assets/assets';
-import { Link } from 'react-router-dom';
-import { AppContext } from '../../context/AppContext';
-import { UserButton, useUser } from '@clerk/clerk-react';
+import React from "react";
+import { assets, dummyEducatorData as educatorData } from "../../assets/assets";
+import { UserButton, useUser } from "@clerk/clerk-react";
+import { Link } from "react-router-dom";
 
-const Navbar = ({ bgColor }) => {
-
-  const { isEducator } = useContext(AppContext)
-  const { user } = useUser()
-
-  return isEducator && user && (
-    <div className={`flex items-center justify-between px-4 md:px-8 border-b border-gray-500 py-3 ${bgColor}`}>
-      <Link to="/">
-        <img src={assets.logo} alt="Logo" className="w-28 lg:w-32" />
+const Navbar = () => {
+  const { user } = useUser();
+  return (
+    <div className="flex items-center justify-between px-4 md:px-8 border-b border-gray-500 py-3">
+      <Link to={"/"}>
+        <img src={assets.logo} className="w-28 lg:w-32" alt="logo" />
       </Link>
       <div className="flex items-center gap-5 text-gray-500 relative">
-        <p>Hi! {user.fullName}</p>
-        <UserButton />
+        <p>Hi! {user ? user.fullName : 'Developers'}</p>
+        { user ? <UserButton /> : <img src={assets.profile_img} className="max-w-8 rounded-full" alt="user" /> }
       </div>
     </div>
   );
